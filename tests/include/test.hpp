@@ -1,84 +1,19 @@
+#pragma once
 #include <catch2/catch.hpp>
 #include <language/language.hpp>
-
-using namespace std;
+#include <language/task.hpp>
+#include <language/promise.hpp>
+#include <language/lexer.hpp>
+#include <language/uni.hpp>
+#include <language/token.hpp>
 #include <experimental/coroutine>
+using namespace std;
 using namespace std::experimental;
-#include <latch>
-/**
- bool = types <int, char, string> | identical
- bool types <int, char, string> | distinct
- */
+//#include <latch>
+//#include <barrier>
 
 
 
 
-
-auto test0 () -> task
-{
-    cout << "::test0" << endl;
-    co_await suspend <true> {};
-    co_await suspend <true> {};
-
-
-//    cout << "_test0" << endl;
-//    co_await suspend_always {};
-
-    cout << "test0::" << endl;
-    co_return;
-
-}
-
-
-
-
-
-
-
-auto test1 () -> task
-{
-//    latch s {3};
-//    s.count_down ();
-//    s.try_wait();
-    cout << "::test1" << endl;
-    co_await test0();
-    co_await suspend <true> {};
-//    co_await suspend_always {};
-//    co_await suspend_always {};
-    cout << "test1::" << endl;
-    co_return;
-
-}
-
-auto test2 () -> task
-{
-//    latch s {3};
-//    s.count_down ();
-//    s.try_wait();
-    cout << "::test2" << endl;
-    co_await test1();
-//    co_await suspend_always {};
-//    co_await suspend_always {};
-    cout << "test2::" << endl;
-    co_return;
-
-}
-
-
-
-auto run () -> int 
-{
-    cout << "hi" << endl;
-    auto t = test2();
-    t.resume ();
-    
-    cout << "==============" << endl;
-    t.resume ();
-    t.resume ();
-    t.resume ();
-    
-    
-    return 0;
-}
-
+auto run () -> int;
 

@@ -1,11 +1,101 @@
-#include <catch2/catch.hpp>
+#include "test.hpp"
 
-#if defined (RUN_CATCH)
-TEST_CASE(){
+
+
+
+
+
+
+auto test0 () -> task <promise_type>
+{
+    cout << "::test0" << endl;
+    co_await suspend <true> {};
+    co_await suspend <true> {};
+    cout << "test0::" << endl;
+    co_return;
+}
+
+
+
+
+
+
+
+auto test1 () -> task <promise_type>
+{
+    cout << "::test1" << endl;
+    co_await test0();
+    co_await suspend <true> {};
+    cout << "test1::" << endl;
+    co_return;
+}
+
+
+
+
+
+auto test2 () -> task <promise_type>
+{
+    cout << "::test2" << endl;
+    co_await test1();
+    cout << "test2::" << endl;
+    co_return;
+}
+
+
+
+
+auto factor () -> task <promise_type>
+{
+    
+    
+    co_return;
+}
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+auto test_task_and_promise ()
+{
+    auto t = test2();
+    t.resume ();
+    cout << "==============" << endl;
+    t.resume ();
+    t.resume ();
+    t.resume ();
+}
+
+
+auto test_lexer (string const& str)
+{
+    
+    
+    auto l = lex ();
+    
+    
+    
+    l.process ('p');
+    l.process ('h');
+    l.process ('i');
     
 }
 
-#endif
+auto run () -> int
+{
+    
+//    test_task_and_promise();
+    test_lexer ("philip");
+
+//    test_lexer ("2+3-4/6");
+    return 0;
+}
+
 
 
 
