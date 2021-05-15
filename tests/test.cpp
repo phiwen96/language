@@ -45,6 +45,9 @@ auto test2 () -> task <promise_type>
 
 
 
+
+
+
 auto factor () -> task <promise_type>
 {
     
@@ -72,17 +75,31 @@ auto test_task_and_promise ()
 }
 
 
+//auto tt0() -> lexer
+//{
+//    cout << "::test0" << endl;
+//    co_await suspend_always {};
+////    co_await suspend_always {};
+//    cout << "test0::" << endl;
+//    co_return;
+//}
+
+
 auto test_lexer (string const& str)
 {
     
-    
+//    auto t = tt0 ();
+//    t.process('s');
+//    t.process('a');
+//    return;
     auto l = lex ();
     
+    cout << "========" << endl;
     
     
     l.process ('p');
-    l.process ('h');
-    l.process ('i');
+//    l.process ('h');
+//    l.process ('i');
     
 }
 

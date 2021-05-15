@@ -11,60 +11,71 @@ using namespace experimental;
 using lexemes = vector <token>;
 
 
-struct __get_char
+struct get_char
 {
-    char m_c;
+    char m_c {':'};
+    
+    
+//    get_char (get_char const& o) : m_c {o.m_c} {}
+//    get_char (get_char&& o) : m_c {o.m_c} {}
+    
+    get_char () {cout << "get_char" << endl;}
     
     auto await_ready () -> bool
     {
+        cout << "await_ready" << endl;
         return false;
     }
     
-    auto await_suspend (coroutine_handle<>) -> void
+    auto await_suspend (coroutine_handle<> c) -> auto
     {
-        
+        cout << "await_suspend" << endl;
+//        return c;
+        return true;
     }
     
     auto await_resume () -> char
     {
+        cout << "await_resume" << endl;
         return m_c;
     }
 };
 
-constexpr __get_char get_char {};
+//constexpr __get_char get_char {};
 
 struct lexer
 {
-    enum class type {
-        bajs
-    };
     struct promise_type
     {
         coroutine_handle <promise_type> m_parent;
         coroutine_handle <promise_type> m_child;
         
-        char m_c;
+        char m_c {'k'};
         
         
         auto process (char c) -> void {
-            if (m_child)
-            {
-                m_child.promise().process(c);
-                
-            } else
-            {
-                if (auto me = coroutine_handle<promise_type>::from_promise(*this);
-                    not me.done())
-                {
-                    m_c = c;
-                    me.resume();
-                    
-                } else
-                {
-                    string s = " already done";
-                    throw runtime_error (s);
-                }
-            }
+            m_c = c;
+            cout << "process2" << endl;
+            coroutine_handle<promise_type>::from_promise(*this).resume();
+            return;
+//            if (m_child)
+//            {
+//                m_child.promise().process(c);
+//
+//            } else
+//            {
+//                if (auto me = coroutine_handle<promise_type>::from_promise(*this);
+//                    not me.done())
+//                {
+//                    m_c = c;
+//                    me.resume();
+//
+//                } else
+//                {
+//                    string s = " already done";
+//                    throw runtime_error (s);
+//                }
+//            }
         }
         auto set_child (coroutine_handle <promise_type> child) -> void {
             m_child = child;
@@ -76,7 +87,9 @@ struct lexer
             return lexer {coroutine_handle <promise_type>::from_promise (*this)};
         }
         auto initial_suspend () {
-            return suspend_always {};
+            cout << "initial suspend" << endl;
+            return suspend_never {};
+//            return suspend_always {};
         }
         auto final_suspend () noexcept {
             struct awaiter
@@ -108,39 +121,66 @@ struct lexer
         auto return_void () {
             
         }
-        auto await_transform (lexer t) {
-            
-            set_child(t.m_handle);
-            t.m_handle.promise().set_parent(coroutine_handle<promise_type>::from_promise(*this));
-
-            
+//        auto await_transform (lexer t) {
+//
+//            set_child(t.m_handle);
+//            t.m_handle.promise().set_parent(coroutine_handle<promise_type>::from_promise(*this));
+//
+//
+//            struct awaiter
+//            {
+//                coroutine_handle <promise_type> m_promise;
+//
+//                auto await_ready () {
+//                    cout << "await_ready" << endl;
+//                    return m_promise.done();
+//                }
+//                auto await_suspend (coroutine_handle <promise_type> awaiting_coro)
+//                {
+//                    cout << "await_suspend" << endl;
+//                    return m_promise;
+//                }
+//                auto await_resume () {
+//                    cout << "await_resumeee" << endl;
+//                }
+//            };
+//            return awaiter {t.m_handle};
+//        }
+//        auto await_transform (suspend <true> a) {
+//            return forward <decltype (a)> (a);
+//        }
+//        auto await_transform (suspend_always g) {
+////            cout << m_c << endl;
+//            return g;
+//        }
+        auto await_transform (get_char g) {
             struct awaiter
             {
-                coroutine_handle <promise_type> m_promise;
-                
-                auto await_ready () {
+                promise_type& p;
+  
+                auto await_ready () -> bool
+                {
                     cout << "await_ready" << endl;
-                    return m_promise.done();
+                    return false;
                 }
-                auto await_suspend (coroutine_handle <promise_type> awaiting_coro)
+                
+                auto await_suspend (coroutine_handle<> c) -> auto
                 {
                     cout << "await_suspend" << endl;
-                    return m_promise;
+            //        return c;
+                    return true;
                 }
-                auto await_resume () {
-                    cout << "await_resumeee" << endl;
+                
+                auto await_resume () -> char
+                {
+                    cout << "await_resume" << endl;
+                    return p.m_c;
                 }
             };
-            return awaiter {t.m_handle};
+            return awaiter {*this};
         }
-        auto await_transform (suspend <true> a) {
-            return forward <decltype (a)> (a);
-        }
-        auto await_transform (__get_char) -> __get_char {
-            return {m_c};
-        }
-    };
     
+    };
     
     coroutine_handle <promise_type> m_handle;
     
@@ -154,6 +194,7 @@ struct lexer
     }
     
     auto process (char c) {
+        cout << "process" << endl;
         m_handle.promise().process (c);
     }
     
@@ -170,19 +211,24 @@ struct lexer
 
 inline auto lex () -> lexer
 {
-    for (;;)
-    {
-        char c = co_await get_char;
-        
-        
-        if (c == '+')
-        {
-            
-        }
-            
-        
-        
-        cout << c << " :O" << endl;
-    }
+    cout << "tjio" << endl;
+    char c = co_await get_char {};
+    cout << c << endl;
+
+//    cout << "tjo" << endl;
+//    for (;;)
+//    {
+//        char c = co_await get_char {};
+//
+//
+//        if (c == '+')
+//        {
+//
+//        }
+//
+//
+//
+//        cout << c << " :O" << endl;
+//    }
     co_return;
 }
