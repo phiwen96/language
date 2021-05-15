@@ -94,10 +94,21 @@ auto test_lexer (string const& str)
 //    return;
     auto l = lex ();
     
+    
     cout << "========" << endl;
     
     
-    l.process ('p');
+    for (auto c : str)
+    {
+        l.process (c);
+        cout << "kmdskmd" << endl;
+    }
+    
+    cout << l.lexemes().size() << endl;
+    
+    for (auto i : l.lexemes())
+        cout << i << endl;
+    
 //    l.process ('h');
 //    l.process ('i');
     
@@ -107,7 +118,7 @@ auto run () -> int
 {
     
 //    test_task_and_promise();
-    test_lexer ("philip");
+    test_lexer ("1+2+3-4");
 
 //    test_lexer ("2+3-4/6");
     return 0;
