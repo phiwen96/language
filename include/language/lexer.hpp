@@ -11,6 +11,11 @@ using namespace experimental;
 using lexemes = vector <token>;
 
 
+struct push
+{
+    
+};
+
 struct __get_char
 {
 
@@ -22,7 +27,8 @@ struct lexer
 {
     struct promise_type
     {
-        lexemes m_lexemes;
+        inline static lexemes m_lexemes;
+        token m_current_token;
         coroutine_handle <promise_type> m_parent;
         coroutine_handle <promise_type> m_child;
         
@@ -154,6 +160,10 @@ struct lexer
     {
         return m_handle.promise().m_lexemes;
     }
+    auto finish ()
+    {
+        
+    }
     
 };
 
@@ -170,27 +180,27 @@ inline auto lex () -> lexer
     {
         if (c == '-')
         {
-            co_yield token::subtraction;
+            co_yield token {.m_type = token::type::subtraction};
             
         } else if (c == '+')
         {
-            co_yield token::addition;
+            co_yield token {.m_type = token::type::addition};
             
         } else if (c == '(')
         {
-            co_yield token::left_paranthesis;
+            co_yield token {.m_type = token::type::left_paranthesis};
             
         } else if (c == ')')
         {
-            co_yield token::right_paranthesis;
+            co_yield token {.m_type = token::type::right_paranthesis};
             
         } else if (c == '/')
         {
-            co_yield token::division;
+            co_yield token {.m_type = token::type::division};
             
         } else if (c == '*')
         {
-            co_yield token::multiplication;
+            co_yield token {.m_type = token::type::multiplication};
             
         } else if (c >= '0' || c <= '9')
         {
@@ -198,7 +208,7 @@ inline auto lex () -> lexer
             
         } else
         {
-            co_yield token::unknown;
+            co_yield token {.m_type = token::type::unknown};
         }
         
         c = co_await get_char;
@@ -219,7 +229,7 @@ inline auto lex () -> lexer
             
             if (c < '0' || c > '9')
             {
-                co_yield token::number;
+                co_yield token {.m_type = token::type::number, .m_str = nr};
                 goto start;
                 
             } else

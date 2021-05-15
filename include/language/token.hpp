@@ -3,72 +3,83 @@
 using namespace std;
 
 
-enum struct token
+struct token
 {
-    left_paranthesis,
-    right_paranthesis,
-    addition,
-    subtraction,
-    multiplication,
-    division,
-    number,
-    variable,
-    left_curly_bracket,
-    right_curly_bracket,
-    left_bracket,
-    right_bracket,
-    unknown
+    enum struct type
+    {
+        left_paranthesis,
+        right_paranthesis,
+        addition,
+        subtraction,
+        multiplication,
+        division,
+        number,
+        variable,
+        left_curly_bracket,
+        right_curly_bracket,
+        left_bracket,
+        right_bracket,
+        unknown
+    };
+    
+    type m_type;
+    string m_str;
 };
+
 
 
 
 inline ostream& operator<< (ostream& os, token const& t)
 {
-    if (t == token::subtraction)
+    if (t.m_type == token::type::subtraction)
     {
         os << "<->";
         
-    } else if (t == token::addition)
+    } else if (t.m_type == token::type::addition)
     {
         os << "<+>";
         
-    } else if (t == token::left_paranthesis)
+    } else if (t.m_type == token::type::left_paranthesis)
     {
         os << "<(>";
         
-    } else if (t == token::right_paranthesis)
+    } else if (t.m_type == token::type::right_paranthesis)
     {
         os << "<)>";
         
-    } else if (t == token::division)
+    } else if (t.m_type == token::type::division)
     {
         os << "</>";
         
-    } else if (t == token::multiplication)
+    } else if (t.m_type == token::type::multiplication)
     {
         os << "<*>";
         
-    } else if (t == token::number)
+    } else if (t.m_type == token::type::number)
     {
-        os << "<12>";
+        os << "<" << t.m_str << ">";
         
-    } else if (t == token::left_curly_bracket)
+    } else if (t.m_type == token::type::variable)
+    {
+        os << "<" << t.m_str << ">";
+        
+    } else if (t.m_type == token::type::left_curly_bracket)
     {
         os << "<{>";
         
-    } else if (t == token::right_curly_bracket)
+    } else if (t.m_type == token::type::right_curly_bracket)
     {
         os << "<}>";
         
-    } else if (t == token::left_bracket)
+    } else if (t.m_type == token::type::left_bracket)
     {
         os << "<[>";
         
-    } else if (t == token::right_bracket)
+    } else if (t.m_type == token::type::right_bracket)
     {
         os << "<]>";
         
-    } else if (t == token::unknown)
+    } else if (t.m_type == token::type::unknown)
     {
         os << "<unknown>";
     }
