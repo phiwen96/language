@@ -57,17 +57,50 @@ struct task
     {
         static void* operator new (size_t sz)
         {
-            cout << "custom new for size " << sz << endl;
+//            cout << "custom new for size " << sz << endl;
             return ::operator new (sz);
         }
         
         static void operator delete (void* ptr)
         {
-            cout << "custom delete" << endl;
+//            cout << "custom delete" << endl;
             ::operator delete (ptr);
         }
         
-        coroutine_handle<> m_parent;
+        coroutine_handle <promise_type> m_parent;
+        coroutine_handle <promise_type> m_child;
+        
+        auto resume () -> void
+        {
+            if (m_child)
+            {
+                m_child.promise().resume();
+                
+            } else
+            {
+                auto me = coroutine_handle<promise_type>::from_promise(*this);
+                
+                if (not me.done())
+                    me.resume();
+                else
+                {
+                    string s = m_function + " already done";
+                    throw runtime_error (s);
+                }
+            }
+        }
+        
+        auto set_child (coroutine_handle<promise_type> child) -> void
+        {
+            m_child = child;
+        }
+        
+        auto set_parent (coroutine_handle<promise_type> parent) -> void
+        {
+            m_parent = parent;
+        }
+        
+        
         
         coroutine_handle<> m_awaiting_coro;
         string m_function;
@@ -90,10 +123,12 @@ struct task
                 auto await_ready () noexcept {
                     return false;
                 }
-                auto await_suspend (coroutine_handle <promise_type> c) noexcept //-> coroutine_handle<>
+                auto await_suspend (coroutine_handle <promise_type> c) noexcept -> coroutine_handle<>
                 {
-                    if (auto coro = c.promise().m_awaiting_coro; coro) {
-//                        return coro;
+                    if (auto coro = c.promise().m_parent; coro)
+                    {
+                        coro.promise().set_child({});
+                        return coro;
                     }
                     else
                         return noop_coroutine();
@@ -111,8 +146,10 @@ struct task
             
         }
         auto await_transform (task t) {
-//            cout << t.m_promise.m_function << endl;
-//            t.m_promise.m_awaiting_coro = coroutine_handle<promise_type>::from_promise(*this);
+            
+            set_child(t.m_handle);
+            t.m_handle.promise().set_parent(coroutine_handle<promise_type>::from_promise(*this));
+
             
             struct awaiter
             {
@@ -127,7 +164,7 @@ struct task
                 {
                     cout << "await_suspend" << endl;
                     cout << m_promise.promise().m_function << ":" << awaiting_coro.promise().m_function << endl;
-                    m_promise.promise().m_awaiting_coro = awaiting_coro;
+//                    m_promise.promise().m_awaiting_coro = awaiting_coro;
                     return m_promise;
 //                    m_promise.resume();
                 }
@@ -161,10 +198,10 @@ struct task
     }
     
     auto resume () {
-        if (not m_handle.done())
-            m_handle.resume();
-        else
-            throw runtime_error ("already done");
+        m_handle.promise().resume();
+    }
+    auto done () {
+        return m_handle.done();
     }
 };
 

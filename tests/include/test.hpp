@@ -30,6 +30,11 @@ auto test0 () -> task
 }
 
 
+
+
+
+
+
 auto test1 () -> task
 {
 //    latch s {3};
@@ -37,7 +42,7 @@ auto test1 () -> task
 //    s.try_wait();
     cout << "::test1" << endl;
     co_await test0();
-//    co_await suspend <true> {};
+    co_await suspend <true> {};
 //    co_await suspend_always {};
 //    co_await suspend_always {};
     cout << "test1::" << endl;
@@ -64,12 +69,13 @@ auto test2 () -> task
 auto run () -> int 
 {
     cout << "hi" << endl;
-    auto t = test1();
+    auto t = test2();
     t.resume ();
     
     cout << "==============" << endl;
     t.resume ();
-//    t.resume ();
+    t.resume ();
+    t.resume ();
     
     
     return 0;
