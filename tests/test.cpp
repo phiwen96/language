@@ -101,10 +101,10 @@ auto test_lexer (string const& str)
     for (auto c : str)
     {
         l.process (c);
-        cout << "kmdskmd" << endl;
+//        cout << "kmdskmd" << endl;
     }
     
-    cout << l.lexemes().size() << endl;
+//    cout << l.lexemes().size() << endl;
     
     for (auto i : l.lexemes())
         cout << i << endl;
@@ -118,7 +118,7 @@ auto run () -> int
 {
     
 //    test_task_and_promise();
-    test_lexer ("11+2+3-40");
+    test_lexer ("-7+11+2+3-40");
 
 //    test_lexer ("2+3-4/6");
     return 0;

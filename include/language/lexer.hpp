@@ -148,6 +148,7 @@ struct lexer
             m_handle.destroy();
     }
     
+    
     auto process (char c) {
 //        cout << "process" << endl;
         m_handle.promise().process (c);
@@ -175,6 +176,9 @@ inline auto lex () -> lexer
 {
     char c;
     c = co_await get_char;
+    
+    string nr;
+    nr.push_back (c);
     
     start:
     {
@@ -218,11 +222,9 @@ inline auto lex () -> lexer
     
     
     
+    
     number:
     {
-        string nr;
-        nr.push_back (c);
-        
         for (;;)
         {
             c = co_await get_char;
@@ -238,6 +240,26 @@ inline auto lex () -> lexer
             }
         }
     }
+    
+minus:
+{
+    for (;;)
+    {
+        c = co_await get_char;
+        
+        if (c < '0' || c > '9')
+        {
+            co_yield token {.m_type = token::type::subtraction};
+            goto start;
+            
+        } else
+        {
+            nr.push_back('-');
+            nr.push_back (c);
+            goto number;
+        }
+    }
+}
     
     
     
