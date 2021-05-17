@@ -2,24 +2,29 @@
 
 using namespace std;
 
-
+#define TOKENS \
+    X (left_paranthesis) \
+    X (right_paranthesis) \
+    X (addition) \
+    X (subtraction) \
+    X (multiplication) \
+    X (division) \
+    X (number) \
+    X (variable) \
+    X (left_curly_bracket) \
+    X (right_curly_bracket) \
+    X (left_bracket) \
+    X (right_bracket) \
+    X (unknown)
+    
 struct token
 {
     enum struct type
     {
-        left_paranthesis,
-        right_paranthesis,
-        addition,
-        subtraction,
-        multiplication,
-        division,
-        number,
-        variable,
-        left_curly_bracket,
-        right_curly_bracket,
-        left_bracket,
-        right_bracket,
-        unknown
+#define X(x) x,
+        TOKENS
+#undef X
+
     };
     
     type m_type;
@@ -31,58 +36,16 @@ struct token
 
 inline ostream& operator<< (ostream& os, token const& t)
 {
-    if (t.m_type == token::type::subtraction)
+    switch (t.m_type)
     {
-        os << "<->";
-        
-    } else if (t.m_type == token::type::addition)
-    {
-        os << "<+>";
-        
-    } else if (t.m_type == token::type::left_paranthesis)
-    {
-        os << "<(>";
-        
-    } else if (t.m_type == token::type::right_paranthesis)
-    {
-        os << "<)>";
-        
-    } else if (t.m_type == token::type::division)
-    {
-        os << "</>";
-        
-    } else if (t.m_type == token::type::multiplication)
-    {
-        os << "<*>";
-        
-    } else if (t.m_type == token::type::number)
-    {
-        os << "<" << t.m_str << ">";
-        
-    } else if (t.m_type == token::type::variable)
-    {
-        os << "<" << t.m_str << ">";
-        
-    } else if (t.m_type == token::type::left_curly_bracket)
-    {
-        os << "<{>";
-        
-    } else if (t.m_type == token::type::right_curly_bracket)
-    {
-        os << "<}>";
-        
-    } else if (t.m_type == token::type::left_bracket)
-    {
-        os << "<[>";
-        
-    } else if (t.m_type == token::type::right_bracket)
-    {
-        os << "<]>";
-        
-    } else if (t.m_type == token::type::unknown)
-    {
-        os << "<unknown>";
-    }
+    #define X(x) \
+    case token::type::x: \
+        os << "<" << #x << ">"; \
+        break;
     
+    TOKENS
+    #undef X
+    }
+
     return os;
 }
