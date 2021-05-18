@@ -1,5 +1,6 @@
-file(GLOB_RECURSE HEADER_LIST "${PROJECT_SOURCE_DIR}/include/${CMAKE_PROJECT_NAME}/*.hpp")
+file(GLOB_RECURSE HEADER_LIST "${CMAKE_CURRENT_SOURCE_DIR}/../include/language/*.hpp")
 file(GLOB SOURCE_LIST ${PROJECT_SOURCE_DIR}/src/*.cpp)
+
 
 set (self ${PROJECT_NAME})
 
@@ -7,7 +8,13 @@ add_library (${self} STATIC
 	${SOURCE_LIST}  ${HEADER_LIST} 
 )
 
-ph_IDE ()
+
+foreach(file ${HEADER_LIST})
+	message(${file})
+endforeach()
+
+
+# ph_IDE ()
 
 ph_precompile (TARGET ${self} PUBLIC PCH ${std_pch} ${boost_pch})
 
