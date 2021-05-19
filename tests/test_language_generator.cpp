@@ -20,6 +20,12 @@ auto seq (int n = 0) -> generator
     }
 }
 
+auto raandom () -> generator
+{
+    for (;;)
+        co_yield rand();
+}
+
 auto take_until (generator& gen, int value) -> generator
 {
     for (auto&& v : gen)
@@ -40,6 +46,41 @@ auto add (generator& gen, int a) -> generator
     }
 }
 
+template <int i, int j>
+struct itt
+{
+
+    struct _itt
+    {
+        int curr;
+        
+        auto operator++()
+        {
+            ++ curr;
+            return *this;
+        }
+        bool operator==(_itt const& other)
+        {
+            return other.curr == curr;
+        }
+        auto operator* ()
+        {
+            return curr;
+        }
+    };
+    
+    auto begin ()
+    {
+        return _itt {i};
+    }
+    auto end ()
+    {
+        return _itt {j};
+    }
+    
+
+};
+
 
 TEST_CASE ("Let lexer generate a token sequence from input")
 {
@@ -48,11 +89,40 @@ TEST_CASE ("Let lexer generate a token sequence from input")
         
         THEN ("output vector <token> should be <minus> <number> <plus>...")
         {
-            auto s = seq(3);
-            auto t = take_until (s, 3);
-            auto a = add (t, 0);
-            for (auto i : a)
-                cout << i << endl;
+//            itt <0, 10> _d;
+//
+//            for (auto i = _d.begin(); i != _d.end(); ++i)
+//            {
+//                cout << *i << endl;
+//            }
+//            return 0;
+//            auto s = seq (0);
+//            for (auto i = s.begin(); i != 10; ++i)
+//            {
+//                cout << *i << endl;
+//            }
+            
+//            auto i = s.begin();
+//            cout << *i << endl;
+//            for (auto i = s.begin(); i != 10; ++i)
+//            {
+//                cout << *i << endl;
+//            }
+            
+//            auto d = raandom();
+//            cout << d << endl;
+//
+//            cout << d << endl;
+            
+            
+//            for (auto i : s)
+//                cout << i << endl;
+            
+            
+//            auto t = take_until (s, 3);
+//            auto a = add (t, 0);
+//            for (auto i : a)
+//                cout << i << endl;
         }
     }
 }

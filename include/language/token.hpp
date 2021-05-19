@@ -53,12 +53,12 @@ struct token
     
 //    token (token const& other) : m_type {other.m_type}, m_str {other.m_str}
 //    {
-//        
+//
 //    }
-//    
+//
 //    token (token&& other) : m_type {other.m_type}, m_str {move (other.m_str)}
 //    {
-//        
+//
 //    }
     
     type m_type;

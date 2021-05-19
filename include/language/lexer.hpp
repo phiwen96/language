@@ -21,6 +21,8 @@ struct push
 struct __get_char {};
 struct __get_value {};
 
+struct init {string const& str;};
+
 constexpr __get_char get_char {};
 constexpr __get_value get_value {};
 
@@ -110,6 +112,7 @@ struct lexer
   
                 auto await_ready () -> bool
                 {
+                    
                     return false;
                 }
                 
@@ -154,7 +157,12 @@ struct lexer
             m_lexemes.push_back (t);
             return suspend_never {};
         };
-    
+        
+        auto yield_value (char c)
+        {
+            m_c = c;
+            return suspend_never {};
+        };
     };
     
 
@@ -186,6 +194,8 @@ struct lexer
     {
         m_handle.promise().process ('\0');
     }
+  
+    
     
 };
 
@@ -195,17 +205,19 @@ struct lexer
 
 inline auto lex () -> lexer
 {
+    
 //    cout << "########" << endl << "LEXING" << endl << "########" << endl;
     string& value = co_await get_value;
     
     char c = co_await get_char;
     
-    
+    cout << c << endl;
+//    cout << c << endl;
     
     
     start:
     {
-//        cout << "start " << c << endl;
+        cout << "start " << c << endl;
         if (c == '-')
         {
 //            value.push_back ('-');
@@ -344,6 +356,27 @@ inline auto lex () -> lexer
     
     
     co_return;
+}
+
+
+
+
+
+
+
+
+inline auto tokenize (string const& input) -> lexemes
+{
+    auto l = lex();
+    l.process(input[0]);
+//    l.process(input[1]);
+//    l.process(input[2]);
+//    for (auto c : input)
+//    {
+//        l.process(c);
+//    }
+//    l.finish();
+    return l.lexemes();
 }
 
 

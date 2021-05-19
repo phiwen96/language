@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include <ph_debug/debug.hpp>
 #include <experimental/coroutine>
 #include <memory>
 using namespace std;
@@ -11,7 +11,7 @@ struct generator
 {
     struct promise_type
     {
-        int m_value;
+        int m_value {0};
         auto get_return_object ()
         {
             return generator {coroutine_handle <promise_type>::from_promise (*this)};
@@ -46,7 +46,7 @@ struct generator
     {
         
     }
-    generator (coroutine_handle <promise_type> handle) : m_handle {handle}
+    explicit generator (coroutine_handle <promise_type> handle) : m_handle {handle}
     {
         
     }
@@ -54,7 +54,9 @@ struct generator
     
     auto begin ()
     {
-        cout << "gen::iter::begin ()" << endl;
+        m_handle.resume();
+//        cout << "called from: " << str << line << endl;
+//        debug_print_called_from(red, 0);
         return _iterator {m_handle};
     }
     
@@ -87,13 +89,22 @@ struct generator
         {
             return m_handle.promise().m_value;
         }
-        int* operator-> () const
-        {
-            return addressof (m_handle.promise().m_value);
-        }
+//        int* operator-> () const
+//        {
+//            return addressof (m_handle.promise().m_value);
+//        }
         bool operator == (_sentinel)
         {
             return m_handle.done();
         }
+        bool operator == (int i)
+        {
+            return m_handle.promise().m_value == i;
+        }
     };
+    
+    friend ostream& operator<< (ostream& os, generator const& g)
+    {
+        return os << g.m_handle.promise().m_value;
+    }
 };

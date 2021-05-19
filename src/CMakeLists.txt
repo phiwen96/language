@@ -10,7 +10,7 @@ add_library (${self} STATIC
 
 
 foreach(file ${HEADER_LIST})
-	message(${file})
+	# message(${file})
 endforeach()
 
 
@@ -19,8 +19,8 @@ endforeach()
 ph_precompile (TARGET ${self} PUBLIC PCH ${std_pch} ${boost_pch})
 
 add_library (ph::language ALIAS ${self})
-target_link_libraries (${self} PUBLIC ${Boost_LIBRARIES})
-target_include_directories (${self} PUBLIC ${PROJECT_SOURCE_DIR}/include ${Boost_INCLUDE_DIRS})
+target_link_libraries (${self} PUBLIC ${Boost_LIBRARIES} ph::debug ph::color)
+target_include_directories (${self} PUBLIC ${PROJECT_SOURCE_DIR}/include ph::debug ph::color ${Boost_INCLUDE_DIRS})
 # target_include_directories (${self} PUBLIC ph::coroutines)
 target_compile_features (${self} PUBLIC cxx_std_20)
 
