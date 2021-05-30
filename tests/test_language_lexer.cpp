@@ -28,10 +28,10 @@ TEST_CASE ("Let lexer generate a token sequence from input string")
     for (auto i : l)
     {
         cout << i << endl;
-        if (i.m_str.size() > 0)
-        {
-            cout << i.m_str << endl;
-        }
+//        if (i.m_str.size() > 0)
+//        {
+//            cout << i.m_str << endl;
+//        }
     }
     
 }

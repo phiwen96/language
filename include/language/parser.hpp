@@ -334,14 +334,14 @@ inline auto expression () -> parser
 
     start:
     {
-        switch (tok.m_type)
+        switch (tok.t)
         {
-            case token::type::term:
-                co_yield {token::type::expression};
-                tok = co_await get_token;
+//            case token::type::term:
+//                co_yield {token::type::expression};
+//                tok = co_await get_token;
                 
-            case token::type::expression:
-                goto await_plus_or_minus;
+//            case token::type::expression:
+//                goto await_plus_or_minus;
                 
             default:
 //                cout << tok << endl;
@@ -356,12 +356,12 @@ inline auto expression () -> parser
     {
         token& tok = co_await get_token;
         
-        switch (tok.m_type)
+        switch (tok.t)
         {
-            case token::type::addition:
+            case token::type::TOKEN_PLUS:
                 break;
                 
-            case token::type::subtraction:
+            case token::type::TOKEN_MINUS:
                 break;
                 
             default:

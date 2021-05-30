@@ -10,7 +10,7 @@ bool operator ==(vector <token> const& toks, vector <token::type> const& types)
     
     for (int i = 0; i < toks.size(); ++i)
     {
-        if (toks[i].m_type != types[i])
+        if (toks[i].t != types[i])
             return false;
     }
     
@@ -119,13 +119,13 @@ auto test_lexer (string const& str) -> lexemes const&
         for (auto i : l.lexemes())
         {
             
-            if (i.m_str.size() > 0)
-            {
-                cout << i << " = " << i.m_str << endl;
-            } else
-            {
-                cout << i << endl;
-            }
+//            if (i.m_str.size() > 0)
+//            {
+//                cout << i << " = " << i.m_str << endl;
+//            } else
+//            {
+//                cout << i << endl;
+//            }
         }
         cout << "====================" << endl;
     }
