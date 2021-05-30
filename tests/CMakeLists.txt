@@ -17,6 +17,7 @@ else()
 endif()
 
 
+ph_add_test (scanner)
 
 
 
