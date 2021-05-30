@@ -1,6 +1,9 @@
 cmake_minimum_required (VERSION 3.19.4)
 get_filename_component (self ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 
+
+
+
 project (
 	${self}
 	VERSION 1.0
@@ -10,6 +13,9 @@ project (
 
 
 add_subdirectory (cmake/phake)
+if (NOT TARGET ph_debug)
+	add_subdirectory (dependencies/ph_debug)
+endif ()
 # add_subdirectory (dependencies/Lua-master)
 # if (NOT TARGET ph_coroutines)
 # 	add_subdirectory (dependencies/ph_coroutines)
@@ -73,3 +79,6 @@ add_subdirectory (src)
 
 
 # cmake -Wno-dev -DCMAKE_CONFIGURATION_TYPES="Debug;Release;Kuk" -DCMAKE_CXX_COMPILER=/Applications/Xcode.app/Contents/Developer/usr/bin/g++ -S . -B xbuild -GXcode && cmake --open xbuild
+
+
+

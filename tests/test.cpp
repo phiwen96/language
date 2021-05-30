@@ -3,7 +3,19 @@
 
 
 
-
+bool operator ==(vector <token> const& toks, vector <token::type> const& types)
+{
+    if (toks.size() != types.size())
+        return false;
+    
+    for (int i = 0; i < toks.size(); ++i)
+    {
+        if (toks[i].m_type != types[i])
+            return false;
+    }
+    
+    return true;
+}
 
 
 auto test0 () -> task <promise_type>
@@ -48,12 +60,12 @@ auto test2 () -> task <promise_type>
 
 
 
-auto factor () -> task <promise_type>
-{
-    
-    
-    co_return;
-}
+//auto factor () -> task <promise_type>
+//{
+//
+//
+//    co_return;
+//}
 
 
 
@@ -85,42 +97,92 @@ auto test_task_and_promise ()
 //}
 
 
-auto test_lexer (string const& str)
+auto test_lexer (string const& str) -> lexemes const&
 {
-    
-//    auto t = tt0 ();
-//    t.process('s');
-//    t.process('a');
-//    return;
     auto l = lex ();
     
+
     
-    cout << "========" << endl;
+    cout << str << endl << "====================" << endl;
     
     
     for (auto c : str)
     {
         l.process (c);
-//        cout << "kmdskmd" << endl;
     }
     
-//    cout << l.lexemes().size() << endl;
+    l.finish();
     
-    for (auto i : l.lexemes())
-        cout << i << endl;
     
-//    l.process ('h');
-//    l.process ('i');
+    if (true)
+    {
+        for (auto i : l.lexemes())
+        {
+            
+            if (i.m_str.size() > 0)
+            {
+                cout << i << " = " << i.m_str << endl;
+            } else
+            {
+                cout << i << endl;
+            }
+        }
+        cout << "====================" << endl;
+    }
     
+    
+    return l.lexemes();
 }
+
+
+auto test_parser (vector <token> const& tokens)
+{
+    auto p = parse ();
+//    p.process (tokens[0]);
+//    p.process (tokens[1]);
+//    p.process (tokens[2]);
+//    for (auto const& token : tokens)
+//    {
+////        cout << token << endl;
+//        p.process (token);
+//    }
+//    for (auto const& t : p.lexemes())
+//    {
+//        cout << t << endl;
+//    }
+    cout << "====================" << endl;
+}
+
+
+
 
 auto run () -> int
 {
     
 //    test_task_and_promise();
-    test_lexer ("-7+11+2+3-40");
+//    test_lexer ("hej");
+//    test_lexer ("hej-7+11+2+3-40");
 
-//    test_lexer ("2+3-4/6");
+    
+    {
+        string inp = "21-3-4/6";
+
+        lexemes const& l = test_lexer (inp);
+        
+        test_parser (l);
+      
+        
+//        vector <token::type> right {
+//            token::type::number,
+//            token::type::number,
+//            token::type::number,
+//            token::type::division,
+//            token::type::number
+//        };
+//        assert (l == right);
+    }
+//    dbug (3 << 4 << endl << 3)
+    
     return 0;
 }
 

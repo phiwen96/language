@@ -1,5 +1,6 @@
-file(GLOB_RECURSE HEADER_LIST "${PROJECT_SOURCE_DIR}/include/${CMAKE_PROJECT_NAME}/*.hpp")
+file(GLOB_RECURSE HEADER_LIST "${CMAKE_CURRENT_SOURCE_DIR}/../include/language/*.hpp")
 file(GLOB SOURCE_LIST ${PROJECT_SOURCE_DIR}/src/*.cpp)
+
 
 set (self ${PROJECT_NAME})
 
@@ -7,13 +8,19 @@ add_library (${self} STATIC
 	${SOURCE_LIST}  ${HEADER_LIST} 
 )
 
-ph_IDE ()
+
+foreach(file ${HEADER_LIST})
+	# message(${file})
+endforeach()
+
+
+# ph_IDE ()
 
 ph_precompile (TARGET ${self} PUBLIC PCH ${std_pch} ${boost_pch})
 
-add_library (ph::expression_templates ALIAS ${self})
-target_link_libraries (${self} PUBLIC ${Boost_LIBRARIES})
-target_include_directories (${self} PUBLIC ${PROJECT_SOURCE_DIR}/include ${Boost_INCLUDE_DIRS})
+add_library (ph::language ALIAS ${self})
+target_link_libraries (${self} PUBLIC ${Boost_LIBRARIES} ph::debug ph::color)
+target_include_directories (${self} PUBLIC ${PROJECT_SOURCE_DIR}/include ph::debug ph::color ${Boost_INCLUDE_DIRS})
 # target_include_directories (${self} PUBLIC ph::coroutines)
 target_compile_features (${self} PUBLIC cxx_std_20)
 

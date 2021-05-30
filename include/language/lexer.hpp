@@ -18,12 +18,13 @@ struct push
     
 };
 
-struct __get_char
-{
+struct __get_char {};
+struct __get_value {};
 
-};
+struct init {string const& str;};
 
 constexpr __get_char get_char {};
+constexpr __get_value get_value {};
 
 struct lexer
 {
@@ -35,6 +36,7 @@ struct lexer
         coroutine_handle <promise_type> m_child;
         
         char m_c;
+        string m_value;
         
         
         auto process (char c) -> void {
@@ -110,21 +112,41 @@ struct lexer
   
                 auto await_ready () -> bool
                 {
-//                    cout << "await_ready" << endl;
+                    
                     return false;
                 }
                 
                 auto await_suspend (coroutine_handle<> c) -> auto
                 {
-//                    cout << "await_suspend" << endl;
-            //        return c;
                     return true;
                 }
                 
                 auto await_resume () -> char
                 {
-//                    cout << "await_resume" << endl;
                     return p.m_c;
+                }
+            };
+//            cout << "await_transform (get_char g)" << endl;
+            return awaiter {*this};
+        }
+        auto await_transform (__get_value const& g) {
+            struct awaiter
+            {
+                promise_type& p;
+  
+                auto await_ready () -> bool
+                {
+                    return false;
+                }
+                
+                auto await_suspend (coroutine_handle<> c) -> auto
+                {
+                    return true;
+                }
+                
+                auto await_resume () -> string&
+                {
+                    return p.m_value;
                 }
             };
 //            cout << "await_transform (get_char g)" << endl;
@@ -135,7 +157,12 @@ struct lexer
             m_lexemes.push_back (t);
             return suspend_never {};
         };
-    
+        
+        auto yield_value (char c)
+        {
+            m_c = c;
+            return suspend_never {};
+        };
     };
     
 
@@ -165,8 +192,10 @@ struct lexer
     }
     auto finish ()
     {
-        
+        m_handle.promise().process ('\0');
     }
+  
+    
     
 };
 
@@ -176,20 +205,28 @@ struct lexer
 
 inline auto lex () -> lexer
 {
-    char c;
-    c = co_await get_char;
     
-    string nr;
-    nr.push_back (c);
+//    cout << "########" << endl << "LEXING" << endl << "########" << endl;
+    string& value = co_await get_value;
+    
+    char c = co_await get_char;
+    
+    cout << c << endl;
+//    cout << c << endl;
+    
     
     start:
     {
+        cout << "start " << c << endl;
         if (c == '-')
         {
+//            value.push_back ('-');
             co_yield token {.m_type = token::type::subtraction};
+//            goto minus;
             
         } else if (c == '+')
         {
+//            cout << "ADD" << endl;
             co_yield token {.m_type = token::type::addition};
             
         } else if (c == '(')
@@ -208,10 +245,53 @@ inline auto lex () -> lexer
         {
             co_yield token {.m_type = token::type::multiplication};
             
-        } else if (c >= '0' || c <= '9')
+        } else if (c == ' ')
         {
+            co_yield token {.m_type = token::type::space};
+            
+        } else if (c == '.')
+        {
+            co_yield token {.m_type = token::type::dot};
+            
+        } else if (c == ',')
+        {
+            co_yield token {.m_type = token::type::comma};
+            
+        } else if (c == ';')
+        {
+            co_yield token {.m_type = token::type::semicolon};
+            
+        } else if (c == ':')
+        {
+            co_yield token {.m_type = token::type::colon};
+            
+        } else if (c == '*')
+        {
+            co_yield token {.m_type = token::type::colon};
+            
+        } else if (c == '\n')
+        {
+            co_yield token {.m_type = token::type::newline};
+            
+        } else if (c == '\t')
+        {
+            co_yield token {.m_type = token::type::tab};
+            
+        } else if (c >= '0' and c <= '9')
+        {
+            value += c;
             goto number;
             
+        } else if ((c > 'a' and c < 'z') or (c > 'A' and c < 'Z') or (c == '_'))
+        {
+            goto identifier;
+            
+        } else if (c > 'a' and c < 'z')
+        {
+//            cout << "whaaat" << endl;
+        } else if (c == '\0') {
+//            cout << "finish!" << endl;
+            goto finish;
         } else
         {
             co_yield token {.m_type = token::type::unknown};
@@ -227,44 +307,77 @@ inline auto lex () -> lexer
     
     number:
     {
-        for (;;)
-        {
-            c = co_await get_char;
-            
-            if (c < '0' || c > '9')
-            {
-                co_yield token {.m_type = token::type::number, .m_str = nr};
-                goto start;
-                
-            } else
-            {
-                nr.push_back (c);
-            }
-        }
-    }
-    
-minus:
-{
-    for (;;)
-    {
+//        cout << "number " << c << endl;
+
         c = co_await get_char;
         
         if (c < '0' || c > '9')
         {
-            co_yield token {.m_type = token::type::subtraction};
+            co_yield token {.m_type = token::type::number, .m_str = value};
+            value.clear ();
+            
             goto start;
             
         } else
         {
-            nr.push_back('-');
-            nr.push_back (c);
+            value += c;
             goto number;
         }
     }
-}
     
+    minus:
+    {
+//        cout << "minus" << endl;
+
+        c = co_await get_char;
+        
+        if (c >= '0' and c <= '9')
+        {
+            value += '-';
+            value += c;
+            
+            goto number;
+            
+        } else
+        {
+            co_yield token {.m_type = token::type::subtraction};
+            goto start;
+        }
+        
+    }
+    
+    identifier:
+    {
+        
+    }
+    
+    finish:
     
     
     
     co_return;
 }
+
+
+
+
+
+
+
+
+inline auto tokenize (string const& input) -> lexemes
+{
+    auto l = lex();
+    l.process(input[0]);
+//    l.process(input[1]);
+//    l.process(input[2]);
+//    for (auto c : input)
+//    {
+//        l.process(c);
+//    }
+//    l.finish();
+    return l.lexemes();
+}
+
+
+
