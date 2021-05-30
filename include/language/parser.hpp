@@ -207,12 +207,12 @@ inline auto factor () -> parser
     {
         token& tok = co_await get_token;
         
-        switch (tok.m_type)
+        switch (tok.t)
         {
-            case token::type::number:
-                co_yield {token::type::factor, tok.m_str};
+            case token::type::TOKEN_NUMBER:
+//                co_yield {token::type::factor, tok.m_str};
                 
-            case token::type::subtraction:
+            case token::type::TOKEN_MINUS:
                 goto got_minus;
                 
             default:
@@ -227,12 +227,12 @@ inline auto factor () -> parser
     {
         token& tok = co_await get_token;
         
-        switch (tok.m_type)
+        switch (tok.t)
         {
-            case token::type::number:
-                co_yield {token::type::factor, string ("-") + tok.m_str};
+            case token::type::TOKEN_NUMBER:
+//                co_yield {token::type::factor, string ("-") + tok.m_str};
                 
-            case token::type::left_paranthesis:
+            case token::type::TOKEN_LEFT_PAREN:
                 goto got_minus_leftparan;
                 
             default:
@@ -246,10 +246,10 @@ inline auto factor () -> parser
     {
         token& tok = co_await get_token;
         
-        switch (tok.m_type)
+        switch (tok.t)
         {
-            case token::type::expression:
-                goto got_minus_leftparan_expression;
+//            case token::type::expression:
+//                goto got_minus_leftparan_expression;
                 
             default:
                 throw runtime_error ("");
@@ -262,9 +262,9 @@ inline auto factor () -> parser
     {
         token& tok = co_await get_token;
         
-        switch (tok.m_type)
+        switch (tok.t)
         {
-            case token::type::right_paranthesis:
+            case token::type::TOKEN_RIGHT_PAREN:
                 break;
 //                co_yield {token::type::factor, string ("-")};
                 
@@ -288,15 +288,15 @@ inline auto term () -> parser
         
         cout << tok << endl;
         
-        switch (tok.m_type)
+        switch (tok.t)
         {
-            case token::type::term:
+//            case token::type::term:
 //                goto await_mult_or_div;
-                break;
+//                break;
                 
-            case token::type::factor:
-                co_yield {token::type::term};
-                break;
+//            case token::type::factor:
+//                co_yield {token::type::term};
+//                break;
                 
             default:
 //                co_await factor ();
@@ -310,12 +310,12 @@ inline auto term () -> parser
     {
         token& tok = co_await get_token;
         
-        switch (tok.m_type)
+        switch (tok.t)
         {
-            case token::type::term:
+//            case token::type::term:
                 goto await_mult_or_div;
                 
-            case token::type::factor:
+//            case token::type::factor:
                 break;
                 
             default:

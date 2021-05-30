@@ -221,61 +221,57 @@ inline auto lex () -> lexer
         if (c == '-')
         {
 //            value.push_back ('-');
-            co_yield token {.m_type = token::type::subtraction};
+            co_yield token {.t = token::type::TOKEN_MINUS};
 //            goto minus;
             
         } else if (c == '+')
         {
 //            cout << "ADD" << endl;
-            co_yield token {.m_type = token::type::addition};
+            co_yield token {.t = token::type::TOKEN_PLUS};
             
         } else if (c == '(')
         {
-            co_yield token {.m_type = token::type::left_paranthesis};
+            co_yield token {.t = token::type::TOKEN_LEFT_PAREN};
             
         } else if (c == ')')
         {
-            co_yield token {.m_type = token::type::right_paranthesis};
+            co_yield token {.t = token::type::TOKEN_RIGHT_PAREN};
             
         } else if (c == '/')
         {
-            co_yield token {.m_type = token::type::division};
+            co_yield token {.t = token::type::TOKEN_SLASH};
             
         } else if (c == '*')
         {
-            co_yield token {.m_type = token::type::multiplication};
+            co_yield token {.t = token::type::TOKEN_STAR};
             
         } else if (c == ' ')
         {
-            co_yield token {.m_type = token::type::space};
+//            co_yield token {.m_type = token::type::};
             
         } else if (c == '.')
         {
-            co_yield token {.m_type = token::type::dot};
+            co_yield token {.t = token::type::TOKEN_DOT};
             
         } else if (c == ',')
         {
-            co_yield token {.m_type = token::type::comma};
+            co_yield token {.t = token::type::TOKEN_COMMA};
             
         } else if (c == ';')
         {
-            co_yield token {.m_type = token::type::semicolon};
+            co_yield token {.t = token::type::TOKEN_SEMICOLON};
             
         } else if (c == ':')
         {
-            co_yield token {.m_type = token::type::colon};
-            
-        } else if (c == '*')
-        {
-            co_yield token {.m_type = token::type::colon};
+//            co_yield token {.m_type = token::type::COLO};
             
         } else if (c == '\n')
         {
-            co_yield token {.m_type = token::type::newline};
+//            co_yield token {.m_type = token::type::newline};
             
         } else if (c == '\t')
         {
-            co_yield token {.m_type = token::type::tab};
+//            co_yield token {.m_type = token::type::tab};
             
         } else if (c >= '0' and c <= '9')
         {
@@ -294,7 +290,7 @@ inline auto lex () -> lexer
             goto finish;
         } else
         {
-            co_yield token {.m_type = token::type::unknown};
+//            co_yield token {.m_type = token::type::unknown};
         }
         
         c = co_await get_char;
@@ -313,7 +309,7 @@ inline auto lex () -> lexer
         
         if (c < '0' || c > '9')
         {
-            co_yield token {.m_type = token::type::number, .m_str = value};
+//            co_yield token {.m_type = token::type::TOKEN_NUMBER, .m_str = value};
             value.clear ();
             
             goto start;
@@ -340,7 +336,7 @@ inline auto lex () -> lexer
             
         } else
         {
-            co_yield token {.m_type = token::type::subtraction};
+            co_yield token {.t = token::type::TOKEN_MINUS};
             goto start;
         }
         
